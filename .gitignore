@@ -4,3 +4,16 @@ __pycache__/
 .env
 .DS_Store
 chroma_db/
+data/
+logs/
+*.log
+.streamlit/
+*.egg-info/
+.vscode/
+.idea/
+build/
+dist/
+.pytest_cache/
+.coverage
+temp/
+*.pdf

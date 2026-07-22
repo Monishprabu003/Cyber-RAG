@@ -99,6 +99,8 @@ def check_dependencies():
         "sentence_transformers": "Embeddings model",
         "pypdf": "PDF processing",
         "dotenv": "Environment variables",
+        "google.generativeai": "Google Generative AI SDK",
+        "langchain_google_genai": "LangChain Google GenAI Integration",
     }
     
     all_installed = True
@@ -168,26 +170,41 @@ def check_code_quality():
     return all_good
 
 
-def check_ollama():
-    """Check if Ollama is available."""
-    print("7️⃣  Checking Ollama Status")
+def check_gemini():
+    """Check Gemini API connectivity and API key configuration."""
+    print("7️⃣  Checking Gemini API Status")
     
+    # Load environment variables
     try:
-        import requests
-        response = requests.get("http://localhost:11434/api/tags", timeout=2)
-        if response.status_code == 200:
-            print("   ✅ Ollama is running")
-            print("   📝 Make sure llama3 model is pulled:")
-            print("      ollama pull llama3")
-            print()
-            return True
-    except Exception:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
         pass
-    
-    print("   ⚠️  Ollama is not currently running")
-    print("   📝 Start Ollama with: ollama serve")
-    print()
-    return False
+        
+    import os
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("   ❌ GEMINI_API_KEY is not set in environment or .env file")
+        print("   📝 Action required: Create a .env file containing:")
+        print("      GEMINI_API_KEY=your_actual_api_key")
+        print()
+        return False
+        
+    try:
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        print("   ✅ google-generativeai and langchain-google-genai libraries loaded")
+        print("   🔄 Testing Gemini connection...")
+        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key)
+        # Call invoke to test key validity
+        llm.invoke("Test connection. Respond with OK.")
+        print("   ✅ Gemini connection test successful")
+        print()
+        return True
+    except Exception as e:
+        print(f"   ❌ Gemini connection failed: {str(e)}")
+        print("   📝 Action required: Check your API key and internet connection")
+        print()
+        return False
 
 
 def check_requirements_file():
@@ -240,20 +257,16 @@ def print_next_steps():
     """Print next steps for running the application."""
     print_header("NEXT STEPS")
     
-    print("1. Install dependencies (if not already done):")
-    print("   pip install -r requirements.txt\n")
-    
-    print("2. Start Ollama (in a separate terminal):")
-    print("   ollama serve\n")
-    
-    print("3. Ensure llama3 model is available:")
-    print("   ollama pull llama3\n")
-    
-    print("4. Run the Streamlit application:")
-    print("   streamlit run app.py\n")
-    
-    print("5. Open your browser to:")
-    print("   http://localhost:8501\n")
+    print("1. Configure your Google Gemini API Key in a .env file:")
+    print("   cp .env.example .env")
+    print("   (Then open .env and set GEMINI_API_KEY=your_key)")
+    print()
+    print("2. Run the Streamlit application:")
+    print("   streamlit run app.py")
+    print()
+    print("3. Open your browser to:")
+    print("   http://localhost:8501")
+    print()
 
 
 def main():
@@ -270,7 +283,7 @@ def main():
     results["Dependencies"] = check_dependencies()
     results["Syntax Check"] = check_syntax()
     results["Code Quality"] = check_code_quality()
-    results["Ollama Status"] = check_ollama()
+    results["Gemini API Status"] = check_gemini()
     results["Requirements File"] = check_requirements_file()
     
     all_passed = print_summary(results)
@@ -281,3 +294,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

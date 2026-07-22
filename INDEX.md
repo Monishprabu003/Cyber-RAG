@@ -41,7 +41,7 @@ Contents:
 - Tech stack details
 - 4-layer architecture diagram
 - Complete installation guide
-- Ollama setup instructions
+- Gemini API setup instructions
 - Usage guide with examples
 - Project structure
 - Troubleshooting guide
@@ -179,7 +179,7 @@ Cyber-RAG/
 | Manual setup | QUICKSTART.md | Step-by-Step |
 | Troubleshoot setup | QUICKSTART.md | Issues & Fixes |
 | Full installation | README.md | Installation |
-| Ollama setup | README.md | Ollama Setup |
+| Gemini API setup | README.md | Gemini API Setup |
 
 ### Usage & Examples
 
@@ -303,9 +303,8 @@ pip install -r requirements.txt
 
 ### Step 3: Run Application
 ```bash
-ollama serve          # Terminal 1
-ollama pull llama3    # Terminal 2
-streamlit run app.py  # Terminal 3
+# Configure GEMINI_API_KEY in .env file, then run:
+streamlit run app.py
 ```
 
 ---
@@ -364,7 +363,7 @@ streamlit run app.py  # Terminal 3
 - Set up log rotation
 - Use Docker for reproducibility
 - Use load balancer for scaling
-- Monitor Ollama memory usage
+- Monitor Gemini API usage & rate limits
 
 ---
 

@@ -1,6 +1,6 @@
-# 🛡️ Cyber Security RAG Assistant
+# 🛡️ Cyber Security Chatbot
 
-A production-grade **Retrieval Augmented Generation (RAG)** application for cybersecurity Q&A. Upload cybersecurity PDFs and get AI-powered answers using advanced document retrieval and language models.
+A production-grade **conversational chatbot** for cybersecurity advice, threat analysis, and optional document-grounded question-answering (RAG). Built using the Google Gemini API, it supports conversational memory, interactive message bubbles, and dual-mode execution (general chat or context-grounded chat).
 
 ---
 
@@ -10,7 +10,7 @@ A production-grade **Retrieval Augmented Generation (RAG)** application for cybe
 - [Tech Stack](#-tech-stack)
 - [Architecture](#-architecture)
 - [Installation](#-installation)
-- [Ollama Setup](#-ollama-setup)
+- [Gemini API Setup](#-gemini-api-setup)
 - [Running the Application](#-running-the-application)
 - [Project Structure](#-project-structure)
 - [Usage Guide](#-usage-guide)
@@ -23,19 +23,19 @@ A production-grade **Retrieval Augmented Generation (RAG)** application for cybe
 ## ✨ Features
 
 ### Core Features
-- ✅ **PDF Upload & Processing** - Upload cybersecurity PDFs with validation
-- ✅ **Intelligent Retrieval** - ChromaDB with semantic search using Sentence Transformers
-- ✅ **LLM Integration** - Ollama with llama3 model for accurate answers
-- ✅ **Context-Aware Answers** - RAG chain that answers only from document context
-- ✅ **Source Citation** - Displays retrieved document chunks with page numbers
-- ✅ **Chat History** - Maintains conversation history in session
+- ✅ **Classical Chat UI** - Sleek, bottom-anchored chat input box with conversational message bubbles
+- ✅ **Conversational Memory** - Remembers context from previous conversation turns for fluid dialogues
+- ✅ **Optional Document Grounding (RAG)** - Upload a PDF in the sidebar to ground chatbot responses in custom document context
+- ✅ **Intelligent Retrieval** - Semantic search using ChromaDB and Sentence Transformers (when RAG is active)
+- ✅ **LLM Integration** - Google Gemini API with gemini-2.5-flash for accurate, context-aware answers
+- ✅ **Source Citations** - Displays matching PDF text chunks and page numbers when answering from a document
+- ✅ **Dual-Mode Operation** - Seamlessly switches between a General Security Chatbot and a Document Grounding assistant
 
 ### Advanced Features
-- 📊 **Vector Persistence** - Persisted ChromaDB for continued sessions
-- 🔍 **Similarity Search** - Retrieves top-4 most relevant chunks (k=4)
-- 📝 **Logging System** - Complete logging for debugging and monitoring
-- 🛡️ **Error Handling** - Comprehensive error handling with user-friendly messages
-- 🚀 **Production-Ready** - Type hints, docstrings, modular architecture
+- 📊 **Vector Persistence** - Persists vector database collections for continuing sessions across restarts
+- 📝 **Logging System** - Complete audit logs in `logs/rag_app.log` for troubleshooting and monitoring
+- 🛡️ **Error Handling** - Comprehensive handling of missing API keys, invalid files, and connection failures
+- 🚀 **Production-Ready** - Clean python code with type hints, docstrings, and modular structure
 
 ---
 
@@ -47,7 +47,7 @@ A production-grade **Retrieval Augmented Generation (RAG)** application for cybe
 | **LLM Framework** | LangChain | 0.1.14 |
 | **Vector Database** | ChromaDB | 0.4.24 |
 | **Embeddings** | Sentence Transformers | 2.2.2 |
-| **LLM** | Ollama (llama3) | - |
+| **LLM** | Google Gemini (gemini-2.5-flash) | - |
 | **PDF Processing** | PyPDF | 4.0.1 |
 | **Language** | Python | 3.12 |
 
@@ -86,8 +86,8 @@ A production-grade **Retrieval Augmented Generation (RAG)** application for cybe
 ┌─────────────────────────────────────────────────────────────┐
 │            Retrieval & LLM Chain                            │
 │  ┌────────────┐  ┌────────────┐  ┌────────────────────┐   │
-│  │ Retriever  │  │ Prompt     │  │ Ollama LLM         │   │
-│  │ (k=4)      │  │ Template   │  │ (llama3)           │   │
+│  │ Retriever  │  │ Prompt     │  │ Gemini LLM         │   │
+│  │ (k=4)      │  │ Template   │  │ (gemini-2.5-flash) │   │
 │  └────────────┘  └────────────┘  └────────────────────┘   │
 └──────────┬──────────────────────────────────────────────────┘
            │
@@ -107,7 +107,7 @@ A production-grade **Retrieval Augmented Generation (RAG)** application for cybe
 
 ### Prerequisites
 - Python 3.12+
-- Ollama installed and running
+- Google Gemini API Key (get it from [Google AI Studio](https://aistudio.google.com/))
 - macOS, Linux, or Windows
 
 ### Step 1: Clone the Repository
@@ -134,40 +134,30 @@ pip install -r requirements.txt
 ### Step 4: Verify Installation
 
 ```bash
-python -c "import streamlit; import langchain; import chromadb; print('✅ All packages installed successfully')"
+python -c "import streamlit; import langchain; import chromadb; import google.generativeai; import langchain_google_genai; print('✅ All packages installed successfully')"
 ```
 
 ---
 
-## 🦙 Ollama Setup
+## 🔑 Gemini API Setup
 
-### Install Ollama
+To use the application, you need to configure your Google Gemini API Key.
 
-1. Download from [ollama.ai](https://ollama.ai)
-2. Install for your operating system
+### Step 1: Create a `.env` file
 
-### Run Ollama
-
+Copy the example environment file:
 ```bash
-# Start Ollama (keep running in background)
-ollama serve
+cp .env.example .env
 ```
 
-### Pull llama3 Model
+### Step 2: Add your Gemini API Key
 
-In a new terminal:
-
-```bash
-ollama pull llama3
+Open the `.env` file and replace `your_key_here` with your actual Google Gemini API Key:
+```env
+GEMINI_API_KEY=AIzaSy...
 ```
 
-### Verify Ollama is Running
-
-```bash
-curl http://localhost:11434/api/tags
-```
-
-You should see a list of available models including `llama3`.
+*Note: Alternatively, you can set the key directly in the Streamlit UI sidebar at runtime, or set it as a system environment variable `export GEMINI_API_KEY=your_key`.*
 
 ---
 
@@ -283,7 +273,7 @@ Build complete RAG chain.
 
 ```python
 from src.rag_chain import build_rag_chain
-chain = build_rag_chain(retriever, model_name="llama3")
+chain = build_rag_chain(retriever, model_name="gemini-2.5-flash")
 ```
 
 #### `run_query(chain, query: str) -> dict`
@@ -299,16 +289,12 @@ result = run_query(chain, "What is cybersecurity?")
 
 ## 🐛 Troubleshooting
 
-### Issue: "Ollama is not running"
+### Issue: "Google Gemini API Key is missing" or "Failed to connect to Google Gemini API"
 
 **Solution:**
-```bash
-# Terminal 1: Start Ollama
-ollama serve
-
-# Terminal 2: Pull model if needed
-ollama pull llama3
-```
+1. Ensure `GEMINI_API_KEY` is set in your `.env` file or environment.
+2. Verify that your API key is valid and has active access to `gemini-2.5-flash` in Google AI Studio.
+3. Ensure you have an active internet connection to make calls to Google's API servers.
 
 ### Issue: "Vector store not found"
 
@@ -394,8 +380,8 @@ Before running:
 - [x] Python 3.12 installed
 - [x] Virtual environment created
 - [x] Dependencies installed from requirements.txt
-- [x] Ollama installed and running
-- [x] llama3 model pulled in Ollama
+- [x] Google Gemini API Key configured in `.env`
+- [x] Internet connection active to reach Gemini API
 - [x] ChromaDB persistence configured
 - [x] All source modules have type hints and docstrings
 - [x] Error handling implemented

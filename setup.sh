@@ -75,20 +75,29 @@ try:
 except: print("   ❌ pypdf")
 
 try:
-    import ollama
-    print("   ✅ ollama")
-except: print("   ❌ ollama")
+    import google.generativeai
+    print("   ✅ google-generativeai")
+except: print("   ❌ google-generativeai")
+
+try:
+    import langchain_google_genai
+    print("   ✅ langchain-google-genai")
+except: print("   ❌ langchain-google-genai")
 VERIFY
 echo ""
 
-# Check Ollama
-echo "7️⃣  Checking Ollama status..."
-if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
-    echo "   ✅ Ollama is running"
-    ollama_status="running"
+# Check Gemini API Key
+echo "7️⃣  Checking Gemini API Key status..."
+gemini_status="missing"
+if [ -f ".env" ] && grep -q "GEMINI_API_KEY=" .env && ! grep -q "GEMINI_API_KEY=your_key_here" .env; then
+    echo "   ✅ GEMINI_API_KEY found in .env"
+    gemini_status="configured"
+elif [ ! -z "$GEMINI_API_KEY" ]; then
+    echo "   ✅ GEMINI_API_KEY found in system environment"
+    gemini_status="configured"
 else
-    echo "   ⚠️  Ollama is not running (will start when needed)"
-    ollama_status="not_running"
+    echo "   ⚠️  GEMINI_API_KEY is not configured yet"
+    gemini_status="missing"
 fi
 echo ""
 
@@ -122,18 +131,17 @@ echo "=============================================="
 echo ""
 echo "🚀 Next steps:"
 echo ""
-echo "1. Make sure Ollama is running:"
-echo "   ollama serve"
+echo "1. Configure your Gemini API Key in the .env file:"
+echo "   cp .env.example .env"
+echo "   (Open .env and replace 'your_key_here' with your Google Gemini API Key)"
 echo ""
-echo "2. In another terminal, pull the llama3 model (if not already pulled):"
-echo "   ollama pull llama3"
-echo ""
-echo "3. Start the Streamlit app:"
+echo "2. Start the Streamlit app:"
 echo "   streamlit run app.py"
 echo ""
-echo "4. Open http://localhost:8501 in your browser"
+echo "3. Open http://localhost:8501 in your browser"
 echo ""
 
-if [ "$ollama_status" = "not_running" ]; then
-    echo "⚠️  IMPORTANT: Ollama must be running for the app to work!"
+if [ "$gemini_status" = "missing" ]; then
+    echo "⚠️  IMPORTANT: You must set GEMINI_API_KEY in .env before using the app!"
 fi
+

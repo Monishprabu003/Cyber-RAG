@@ -13,13 +13,16 @@ langchain-huggingface==0.0.1
 
 # Vector Database & Embeddings
 chromadb==0.4.24
-sentence-transformers==2.2.2
+sentence-transformers>=2.2.2
 
 # PDF Processing
 pypdf==4.0.1
 
 # LLM Integration
-ollama==0.1.24
+google-generativeai==0.5.4
+langchain-google-genai==1.0.4
+
 
 # Utilities
 python-dotenv==1.0.0
+tenacity>=8.2.0

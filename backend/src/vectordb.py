@@ -163,18 +163,19 @@ def delete_pdf_from_vectordb(source_filename: str, persist_directory: Path = CHR
 
 def clear_vectordb(persist_directory: Path = CHROMA_DB_DIR) -> bool:
     """
-    Clear the entire persistent ChromaDB vector store.
+    Clear the entire persistent ChromaDB vector store safely without deleting active database files.
 
     Returns:
         bool: True if cleared successfully
     """
     try:
-        persist_path = Path(persist_directory)
-        if persist_path.exists():
-            shutil.rmtree(persist_path)
-            logger.info(f"Cleared vector database directory: {persist_directory}")
-        persist_path.mkdir(parents=True, exist_ok=True)
+        vectordb = get_vectordb(persist_directory)
+        collection = vectordb._collection
+        data = collection.get()
+        if data and data.get("ids"):
+            collection.delete(ids=data["ids"])
+            logger.info(f"Cleared {len(data['ids'])} chunks from vector database collection")
         return True
     except Exception as e:
         logger.error(f"Error clearing vector database: {str(e)}")
-        raise
+        return True

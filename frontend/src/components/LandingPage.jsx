@@ -14,10 +14,7 @@ import {
   RefreshCw 
 } from 'lucide-react';
 
-export default function LandingPage({ stats, documents, onLaunchApp }) {
-  const docCount = stats?.pdf_count || (documents?.length || 0);
-  const chunkCount = stats?.total_chunks || 0;
-
+export default function LandingPage({ onLaunchApp }) {
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -42,10 +39,6 @@ export default function LandingPage({ stats, documents, onLaunchApp }) {
         </div>
 
         <div className="landing-actions">
-          <div className="header-status-pill">
-            <span className="status-dot-green" />
-            <span>Indexed: {docCount} Docs ({chunkCount} Chunks)</span>
-          </div>
           <button className="btn-launch-header" onClick={onLaunchApp}>
             <span>Open Workspace</span>
             <ArrowRight size={16} />
@@ -56,11 +49,6 @@ export default function LandingPage({ stats, documents, onLaunchApp }) {
       {/* Hero Section */}
       <section className="landing-hero">
         <div className="hero-card">
-          <div className="hero-badge">
-            <Zap size={15} color="#2563eb" />
-            <span>Powered by LangChain, ChromaDB MMR & Gemini 2.5 Flash</span>
-          </div>
-          
           <h1 className="hero-headline">
             Evidence-Verified PDF Intelligence with <span className="highlight-text">Zero Hallucinations</span>.
           </h1>

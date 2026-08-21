@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 # Ensure src directory is in sys.path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src'))
